@@ -29,8 +29,7 @@ static char	*itoa(int n, char *str)
 	free(str);
 	return (tmp);
 }
-
-static int slvl_init(char *env, char **dest)
+static int	slvl_init(char *env, char **dest)
 {
 	int		n;
 	char	*str;
@@ -66,12 +65,12 @@ char	**init_env(char **env)
 	{
 		if (!ft_strncmp(env[i], "SHLVL=", 6) \
 		&& slvl_init(env[i], &(tab[i])))
-			return (tab[i + 1] = NULL, ft_free_tab(tab), NULL);
+			return (ft_free_tab(tab), NULL);
 		else if (ft_strncmp(env[i], "SHLVL=", 6))
 		{
 			tab[i] = ft_strdup(env[i]);
 			if (!tab[i])
-				return (tab[i + 1] = NULL, ft_free_tab(tab), NULL);
+				return (ft_free_tab(tab), NULL);
 		}
 		i++;
 	}
