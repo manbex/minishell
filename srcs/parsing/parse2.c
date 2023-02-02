@@ -41,68 +41,6 @@ void	parse_tok(t_tok **t, t_tok **infile, t_tok **outfile, t_tok **arg)
 	}
 }
 
-int	init_outfile(t_lst **new, t_tok *t)
-{
-	int		size;
-	int		i;
-	t_tok	*tmp;
-
-	if (t)
-	{
-		size = ft_tok_size(t) / 2;
-		(*new)->outfile = malloc((size + 1) * sizeof(t_redir));
-		if (!(*new)->infile)
-			return (free_tok(t), 1);
-		(*new)->outfile[size].str = NULL;
-		i = 0;
-		tmp = t;
-		while (tmp)
-		{
-			(*new)->outfile[i].type = 0;
-			if (!ft_strcmp(tmp->str, "<<"))
-				(*new)->outfile[i].type = 1;
-			tmp = tmp->next;
-			(*new)->outfile[i].str = ft_strdup(tmp->str);
-			if (!(*new)->outfile[i].str)
-				return (free_tok(t), ft_free_redir((*new)->outfile), 1);
-			tmp = tmp->next;
-			i++;
-		}
-	}
-	return (free_tok(t), 0);
-}
-
-
-int	init_infile(t_lst **new, t_tok *t)
-{
-	int		size;
-	int		i;
-	t_tok	*tmp;
-
-	if (t)
-	{
-		size = ft_tok_size(t) / 2;
-		(*new)->infile = malloc((size + 1) * sizeof(t_redir));
-		if (!(*new)->infile)
-			return (free_tok(t), 1);
-		(*new)->infile[size].str = NULL;
-		i = 0;
-		tmp = t;
-		while (tmp)
-		{
-			(*new)->infile[i].type = 0;
-			if (!ft_strcmp(tmp->str, "<<"))
-				(*new)->infile[i].type = 1;
-			tmp = tmp->next;
-			(*new)->infile[i].str = ft_strdup(tmp->str);
-			if (!(*new)->infile[i].str)
-				return (free_tok(t), ft_free_redir((*new)->infile), 1);
-			tmp = tmp->next;
-			i++;
-		}
-	}
-	return (free_tok(t), 0);
-}
 
 int	init_cmd(t_data *d, t_tok *t)
 {
@@ -132,13 +70,10 @@ int	init_cmd(t_data *d, t_tok *t)
 
 	if (init_arg(new, arg))
 		return (free_tok(infile), free_tok(outfile), free(new), 1);
-//	if (init_infile(&new, infile))
-//		return (free_tok(outfile), ft_lst_free(new), 1);
-//	if (init_outfile(&new, outfile))
-//		return (ft_lstfree(new), 1);
-	
-	free_tok(infile);
-	free_tok(outfile);
+	if (init_redir(&(new->infile), infile))
+		return (free_tok(outfile), ft_lst_free(new), 1);
+	if (init_redir(&(new->outfile), outfile))
+		return (ft_lst_free(new), 1);
 	return (ft_lst_add_back(&d->l, new), 0);
 }
 

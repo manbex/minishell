@@ -23,6 +23,7 @@ SRC 		=	main.c					\
 				parse.c					\
 				parse2.c				\
 				init_arg.c				\
+				init_redir.c			\
 				)						\
 				$(addprefix builtins/,	\
 				get_cmd.c				\

@@ -79,5 +79,6 @@ void				print_tab(char **tab);		//temp
 int					ft_history(t_data *d, char **str);
 int					init_arg(t_lst *new, t_tok *t);
 void				print_redir(t_redir *tab);	//temp
+int					init_redir(t_redir **tab, t_tok *t);
 
 #endif
