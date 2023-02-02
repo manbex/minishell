@@ -48,7 +48,7 @@ int	new_tok(t_tok **t, char *str, int j)
 	if (!new)
 		return (1);
 	new->str = malloc((j + 1) * sizeof(char));
-	if (!str)
+	if (!new->str)
 		return (free(new), 1);
 	ft_strlcpy(new->str, str, j + 1);
 	new->next = NULL;
