@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	parse_tok(t_tok **t, t_tok **infile, t_tok **outfile, t_tok **arg)
+static void	parse_tok(t_tok **t, t_tok **infile, t_tok **outfile, t_tok **arg)
 {
 	t_tok	*tmp;
 	t_tok	*tmp2;
@@ -41,8 +41,7 @@ void	parse_tok(t_tok **t, t_tok **infile, t_tok **outfile, t_tok **arg)
 	}
 }
 
-
-int	init_cmd(t_data *d, t_tok *t)
+static int	init_cmd(t_data *d, t_tok *t)
 {
 	t_tok	*infile;
 	t_tok	*outfile;
@@ -62,12 +61,6 @@ int	init_cmd(t_data *d, t_tok *t)
 	new->next = NULL;
 	parse_tok(&t, &infile, &outfile, &arg);
 	free_tok(t);
-
-	//print_tok(infile);
-	//print_tok(outfile);
-	//print_tok(arg);
-	//printf("\n");
-
 	if (init_arg(new, arg))
 		return (free_tok(infile), free_tok(outfile), free(new), 1);
 	if (init_redir(&(new->infile), infile))
@@ -93,7 +86,6 @@ int	init_list(t_data *d, t_tok *t)
 		t = tmp;
 		if (init_cmd(d, cmd))
 			return (free_tok(t), 1);
-		//free_tok(cmd);
 	}
 	return (0);
 }

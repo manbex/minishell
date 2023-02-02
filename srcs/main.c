@@ -54,7 +54,7 @@ int	prompt(t_data *d)
 	//	get_cmd(str, d->env);
 		if (ft_history(d, &str))
 			return (exit_shell(d, EXIT_FAILURE), 1);
-		if (parse_line(d, str))
+		if (parsing(d, str))
 			return (exit_shell(d, EXIT_FAILURE), 1);
 		ft_print_lst(d->l);
 		d->l = ft_lst_free(d->l);
