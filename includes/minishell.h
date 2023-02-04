@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 18:19:09 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/01 08:23:32 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/03 18:21:53 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # define COLOR "\1\033[38;5;208m\2"
 # define COLOR_RESET "\1\x1b[0m\2"
 # define PROMPT "minishell > "
+# define CUSTOM 10
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -28,10 +29,9 @@
 # include <stdbool.h>
 # include <string.h>
 # include <sys/wait.h>
-# include "built_ins.h"
 # include "libft.h"
 
-typedef struct s_tok
+typedef struct s_tok	//utilise pour parser la ligne recupere par le prompt
 {
 	char			*str;
 	struct s_tok	*next;
@@ -56,9 +56,16 @@ typedef struct s_lst
 typedef struct s_data
 {
 	t_lst			*l;		//la liste des commandes apres le parsing
-	char			*tmp;	
-	char			**env;
+	char			*tmp;	//une string qui garde le dernier input ajoute a l'historique. si on renvoie le meme ne sera pas ajoute	
+	char			**env;	//l'environnement de notre shell. c'est une copie de l'environnement recupere en argument donc on peut le modifier au besoin.
 }					t_data;
+
+typedef struct s_builtins
+{
+	char			**cmd;
+	char			*cmd_path;
+	char			*cmd_to_execute;
+}					t_builtins;
 
 char				**free_tab(char **tab, int i);
 void				ft_free_redir(t_redir *ptr);
@@ -78,5 +85,14 @@ int					ft_history(t_data *d, char **str);
 int					init_arg(t_lst *new, t_tok *t);
 void				print_redir(t_redir *tab);	//temp
 int					init_redir(t_redir **tab, t_tok *t);
+
+char				*find_cmd(char *str, char **env, t_builtins *data);
+int					get_cmd(char **cmd, t_data *d);
+int					valid_input(t_builtins *data, t_data *d);
+int					execute_builtin(t_builtins *data, t_data *d);
+int					cmd_echo(t_builtins *data, t_data *d);
+int					cmd_cd(t_builtins *data, t_data *d);
+int					cmd_pwd(void);
+int					cmd_env(char **env);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbenicho <mbenicho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:19:46 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/01/31 19:19:46 by mbenicho         ###   ########.fr       */
+/*   Updated: 2023/02/03 18:06:03 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ int	parsing(t_data *d, char *str)
 		return (write(2, "Unexpected error\n", 17), 1);
 	free(str);
 	if (syntax_check(t))
-		return (free_tok(t), write(2, "Syntax error\n", 13), 1);
+		return (free_tok(t), write(2, "Syntax error\n", 13), 0);
 	if (init_list(d, t))
 		return (write(2, "Unexpected error\n", 17), 1);
 	return (0);

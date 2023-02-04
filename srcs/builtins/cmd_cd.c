@@ -1,30 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
+/*   cmd_cd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/31 19:19:46 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/03 18:16:19 by julmuntz         ###   ########.fr       */
+/*   Created: 2023/02/01 21:41:00 by julmuntz          #+#    #+#             */
+/*   Updated: 2023/02/03 18:18:48 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-size_t	ft_strlcpy(char *dst, char *src, size_t size)
+int	cmd_cd(t_builtins *data, t_data *d)
 {
-	size_t	i;
+	char	*path;
 
-	i = 0;
-	if (size != 0)
+	path = find_cmd(data->cmd[1], d->env, data);
+	if (!path)
 	{
-		while (src[i] && i < (size - 1))
-		{
-			dst[i] = src[i];
-			i++;
-		}
-		dst[i] = '\0';
+		printf("bash: %s: %s: No such file or directory\n",
+			data->cmd[0], data->cmd[1]);
+		return (0);
 	}
-	return (ft_strlen(src));
+	chdir(path);
+	return (0);
 }

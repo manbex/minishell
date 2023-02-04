@@ -6,17 +6,18 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 11:11:26 by julmuntz          #+#    #+#             */
-/*   Updated: 2023/02/01 08:11:05 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/03 17:53:54 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "built_ins.h"
+#include "minishell.h"
 
-int	cmd_echo(t_builtins *data)
+int	cmd_echo(t_builtins *data, t_data *d)
 {
 	int	i;
 
 	i = 1;
+	(void)d;
 	if (!data->cmd[1])
 		printf("\n");
 	else if (data->cmd[1])
@@ -24,7 +25,7 @@ int	cmd_echo(t_builtins *data)
 		while (data->cmd[i])
 		{
 			printf("%s", data->cmd[i]);
-			if (i == (int)ft_arrstrlen(data->cmd) - 1)
+			if ((i + 1) == (int)ft_arrstrlen(data->cmd))
 				break ;
 			printf(" ");
 			i++;
