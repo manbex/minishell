@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 18:19:09 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/03 18:21:53 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/04 15:35:02 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,9 @@ typedef struct s_lst
 
 typedef struct s_data
 {
-	t_lst			*l;		//la liste des commandes apres le parsing
-	char			*tmp;	//une string qui garde le dernier input ajoute a l'historique. si on renvoie le meme ne sera pas ajoute	
-	char			**env;	//l'environnement de notre shell. c'est une copie de l'environnement recupere en argument donc on peut le modifier au besoin.
+	t_lst			*l;				//la liste des commandes apres le parsing
+	char			*tmp;			//une string qui garde le dernier input ajoute a l'historique. si on renvoie le meme ne sera pas ajoute	
+	char			**env;			//l'environnement de notre shell. c'est une copie de l'environnement recupere en argument donc on peut le modifier au besoin.
 }					t_data;
 
 typedef struct s_builtins
@@ -85,6 +85,9 @@ int					ft_history(t_data *d, char **str);
 int					init_arg(t_lst *new, t_tok *t);
 void				print_redir(t_redir *tab);	//temp
 int					init_redir(t_redir **tab, t_tok *t);
+char				*expand_vars(t_data *d, char *str);
+int					parse_quotes(char *str);
+int					ft_tok_join(t_tok *t, char **str);
 
 char				*find_cmd(char *str, char **env, t_builtins *data);
 int					get_cmd(char **cmd, t_data *d);

@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:19:46 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/03 18:06:03 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/04 16:54:35 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	parse_quotes(char *str)
 	else
 		while (str[i] && str[i] != '\'')
 			i++;
-	if (!str[i])
+	if (str[i] == 0)
 		i = 0;
 	return (i);
 }
@@ -92,6 +92,9 @@ int	parsing(t_data *d, char *str)
 	t = NULL;
 	if (*str == 0)
 		return (free(str), 0);
+	str = expand_vars(d, str);
+	if (!str)
+		return (write(2, "Unexpected error\n", 17), 1);
 	if (parse_line(&t, str))
 		return (write(2, "Unexpected error\n", 17), 1);
 	free(str);

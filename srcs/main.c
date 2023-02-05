@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:19:46 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/03 18:15:27 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/04 16:11:18 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,24 +21,24 @@ void	exit_shell(t_data *d, int code)
 	exit(code);
 }
 
-//fonction temporaire pour afficher les commandes apres parsing
-// void	ft_print_lst(t_lst *l)
-// {
-// 	while (l)
-// 	{
-// 		printf("cmd = %s\n", l->cmd);
-// 		printf("arg= ");
-// 		print_tab(l->arg);
-// 		printf("infile= ");
-// 		print_redir(l->infile);
-// 		printf("outfile= ");
-// 		print_redir(l->outfile);
-// 		printf("\n");
-// 		l = l->next;
-// 	}
-// }
+// fonction temporaire pour afficher les commandes apres parsing
+void	ft_print_lst(t_lst *l)
+{
+	while (l)
+	{
+		printf("cmd = %s\n", l->cmd);
+		printf("arg= ");
+		print_tab(l->arg);
+		printf("infile= ");
+		print_redir(l->infile);
+		printf("outfile= ");
+		print_redir(l->outfile);
+		printf("\n");
+		l = l->next;
+	}
+}
 
-static int	exe_cmd(t_data *d)
+/*static int	exe_cmd(t_data *d)
 {
 	char	**cmd;
 
@@ -46,7 +46,7 @@ static int	exe_cmd(t_data *d)
 	if (!get_cmd(cmd, d))
 		return (ft_lst_free(d->l), exit_shell(d, EXIT_SUCCESS), 1);
 	return (0);
-}
+}*/
 
 void	prompt(t_data *d)
 {
@@ -65,7 +65,8 @@ void	prompt(t_data *d)
 			return (free(str), exit_shell(d, EXIT_SUCCESS));
 		if (parsing(d, str))
 			return (exit_shell(d, EXIT_FAILURE));
-		exe_cmd(d);
+		ft_print_lst(d->l);
+	//	exe_cmd(d);
 		d->l = ft_lst_free(d->l);
 	}
 }

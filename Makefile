@@ -6,7 +6,7 @@
 #    By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/27 17:17:08 by julmuntz          #+#    #+#              #
-#    Updated: 2023/01/29 22:07:59 by julmuntz         ###   ########.fr        #
+#    Updated: 2023/02/04 15:51:41 by julmuntz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,8 @@ SRC 		=	main.c					\
 				parse2.c				\
 				init_arg.c				\
 				init_redir.c			\
+				expand.c				\
+				ft_tok_join.c			\
 				)						\
 				$(addprefix builtins/,	\
 				get_cmd.c				\
@@ -31,6 +33,7 @@ SRC 		=	main.c					\
 				cmd_echo.c				\
 				cmd_pwd.c				\
 				cmd_env.c				\
+				cmd_cd.c				\
 				)						\
 				$(addprefix libft/,		\
 				ft_strcmp.c				\
@@ -49,13 +52,15 @@ SRC 		=	main.c					\
 				ft_calloc.c				\
 				ft_bzero.c				\
 				ft_strlen.c				\
+				ft_putstr.c				\
+				ft_count_chars.c		\
 				)
 
 OBJ_DIR		=	obj/
 OBJ			=	$(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 
 CC			=	cc
-CFLAGS		=	-Iincludes -Wall -Wextra -Werror -g
+CFLAGS		=	-Iincludes -g
 RM			=	rm -f
 
 $(OBJ_DIR)%.o:	$(SRC_DIR)%.c
