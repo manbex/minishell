@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:19:46 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/04 16:11:18 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/05 23:35:14 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	exit_shell(t_data *d, int code)
 {
 	rl_clear_history();
+	free(d->prompt);
 	ft_free_tab(d->env);
 	ft_lst_free(d->l);
 	free(d->tmp);
@@ -38,15 +39,23 @@ void	ft_print_lst(t_lst *l)
 	}
 }
 
-/*static int	exe_cmd(t_data *d)
+int	ft_history(t_data *d, char **str)
 {
-	char	**cmd;
+	char	*s;
 
-	cmd = d->l->arg;
-	if (!get_cmd(cmd, d))
-		return (ft_lst_free(d->l), exit_shell(d, EXIT_SUCCESS), 1);
+	s = ft_strtrim(*str, " ");
+	free(*str);
+	if (!s)
+		return (1);
+	*str = s;
+	if (!d->tmp || (d->tmp && ft_strcmp(s, d->tmp) && s[0]))
+		add_history(s);
+	free(d->tmp);
+	d->tmp = ft_strdup(s);
+	if (!d->tmp)
+		return (free(s), 1);
 	return (0);
-}*/
+}
 
 void	prompt(t_data *d)
 {
@@ -56,17 +65,15 @@ void	prompt(t_data *d)
 	d->tmp = NULL;
 	while (1)
 	{
-		str = readline(COLOR PROMPT COLOR_RESET);
+		refresh_prompt(d);
+		str = readline(d->prompt);
 		if (!str)
-			return (exit_shell(d, EXIT_FAILURE));
+			exit_shell(d, EXIT_FAILURE);
 		if (ft_history(d, &str))
-			return (exit_shell(d, EXIT_FAILURE));
-		if (!ft_strcmp(str, "exit"))
-			return (free(str), exit_shell(d, EXIT_SUCCESS));
+			exit_shell(d, EXIT_FAILURE);
 		if (parsing(d, str))
-			return (exit_shell(d, EXIT_FAILURE));
-		ft_print_lst(d->l);
-	//	exe_cmd(d);
+			exit_shell(d, EXIT_FAILURE);
+		exe_cmd(d);
 		d->l = ft_lst_free(d->l);
 	}
 }

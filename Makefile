@@ -6,7 +6,7 @@
 #    By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/27 17:17:08 by julmuntz          #+#    #+#              #
-#    Updated: 2023/02/04 15:51:41 by julmuntz         ###   ########.fr        #
+#    Updated: 2023/02/06 01:08:45 by julmuntz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME		=	minishell
 
 SRC_DIR		=	srcs/
 SRC 		=	main.c					\
-				history.c				\
+				main2.c					\
 				$(addprefix parsing/,	\
 				env.c					\
 				tok_utils.c				\
@@ -26,6 +26,7 @@ SRC 		=	main.c					\
 				init_redir.c			\
 				expand.c				\
 				ft_tok_join.c			\
+				remove_quotes.c			\
 				)						\
 				$(addprefix builtins/,	\
 				get_cmd.c				\
@@ -34,6 +35,7 @@ SRC 		=	main.c					\
 				cmd_pwd.c				\
 				cmd_env.c				\
 				cmd_cd.c				\
+				cmd_exit.c				\
 				)						\
 				$(addprefix libft/,		\
 				ft_strcmp.c				\
@@ -60,7 +62,7 @@ OBJ_DIR		=	obj/
 OBJ			=	$(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 
 CC			=	cc
-CFLAGS		=	-Iincludes -g
+CFLAGS		=	-Iincludes -Wall -Wextra -Werror -g
 RM			=	rm -f
 
 $(OBJ_DIR)%.o:	$(SRC_DIR)%.c
@@ -68,7 +70,7 @@ $(OBJ_DIR)%.o:	$(SRC_DIR)%.c
 					$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME):		$(OBJ)
-					$(CC) $(CFLAGS) $(OBJ) -o $@ -lreadline
+					@$(CC) $(CFLAGS) $(OBJ) -o $@ -lreadline
 
 all:			$(NAME)
 
