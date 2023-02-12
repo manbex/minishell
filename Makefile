@@ -6,7 +6,7 @@
 #    By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/27 17:17:08 by julmuntz          #+#    #+#              #
-#    Updated: 2023/02/06 01:08:45 by julmuntz         ###   ########.fr        #
+#    Updated: 2023/02/12 02:00:56 by julmuntz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,7 @@ NAME		=	minishell
 SRC_DIR		=	srcs/
 SRC 		=	main.c					\
 				main2.c					\
+				exe_cmd.c				\
 				$(addprefix parsing/,	\
 				env.c					\
 				tok_utils.c				\
@@ -33,13 +34,15 @@ SRC 		=	main.c					\
 				check_input.c			\
 				cmd_echo.c				\
 				cmd_pwd.c				\
+				cmd_export.c			\
 				cmd_env.c				\
 				cmd_cd.c				\
 				cmd_exit.c				\
+				export_utils.c			\
 				)						\
 				$(addprefix libft/,		\
 				ft_strcmp.c				\
-				ft_strlcpy.c			\
+				ft_strcpy.c				\
 				ft_strdup.c				\
 				ft_strtrim.c			\
 				ft_superatoi.c			\
@@ -56,6 +59,9 @@ SRC 		=	main.c					\
 				ft_strlen.c				\
 				ft_putstr.c				\
 				ft_count_chars.c		\
+				ft_bigcat.c				\
+				ft_strcat.c				\
+				ft_sort_array.c			\
 				)
 
 OBJ_DIR		=	obj/

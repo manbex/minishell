@@ -12,12 +12,8 @@
 
 #include "minishell.h"
 
-void	cmd_exit(t_builtins *data, t_data *d)
+void	cmd_exit(t_data *d)
 {
-	if (!ft_strcmp(*data->cmd, "exit"))
-	{
-		write(1, "exit\n", 5);
-		exit_shell(d, EXIT_SUCCESS);
-		return ;
-	}
+	write(1, "exit\n", 5);
+	exit_shell(d, EXIT_SUCCESS);
 }

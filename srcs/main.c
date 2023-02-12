@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:19:46 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/05 23:35:14 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/12 02:43:53 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void	exit_shell(t_data *d, int code)
 {
 	rl_clear_history();
 	free(d->prompt);
+	free_export(d->node);
 	ft_free_tab(d->env);
 	ft_lst_free(d->l);
 	free(d->tmp);
@@ -59,21 +60,24 @@ int	ft_history(t_data *d, char **str)
 
 void	prompt(t_data *d)
 {
-	char	*str;
+	char		*str;
 
 	str = NULL;
 	d->tmp = NULL;
+	d->prompt = NULL;
+	d->node = create_export_list(d->env);
 	while (1)
 	{
-		refresh_prompt(d);
+		signal(SIGQUIT, SIG_IGN);
+		signal(SIGINT, handle_ctrl_c);
+		if (refresh_prompt(d))
+			return (exit_shell(d, EXIT_FAILURE));
 		str = readline(d->prompt);
 		if (!str)
-			exit_shell(d, EXIT_FAILURE);
-		if (ft_history(d, &str))
-			exit_shell(d, EXIT_FAILURE);
-		if (parsing(d, str))
-			exit_shell(d, EXIT_FAILURE);
-		exe_cmd(d);
+			return (exit_shell(d, EXIT_FAILURE));
+		if (ft_history(d, &str) || parsing(d, str) || exe_cmd(d))
+			return (exit_shell(d, EXIT_FAILURE));
+		free(d->prompt);
 		d->l = ft_lst_free(d->l);
 	}
 }

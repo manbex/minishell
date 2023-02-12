@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/28 23:16:32 by julmuntz          #+#    #+#             */
-/*   Updated: 2023/02/05 23:24:45 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/12 02:08:29 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,12 @@ static char	*find_paths(char **env)
 	return (0);
 }
 
-char	*find_cmd(char *str, char **env, t_builtins *data)
+char	*find_cmd(char *str, char **env)
 {
 	int		i;
 	char	*path;
 	char	**paths;
+	char	*cmd_path;
 
 	i = -1;
 	paths = ft_split(find_paths(env), ':');
@@ -39,73 +40,74 @@ char	*find_cmd(char *str, char **env, t_builtins *data)
 		if (!ft_strchr(str, '/'))
 		{
 			path = ft_strjoin(paths[i], "/");
-			data->cmd_path = ft_strjoin(path, str);
+			cmd_path = ft_strjoin(path, str);
 			free(path);
-			if (!access(data->cmd_path, F_OK))
-				return (data->cmd_path);
+			if (!access(cmd_path, F_OK))
+				return (cmd_path);
 		}
 		else
-			data->cmd_path = str;
-		if (!access(data->cmd_path, F_OK))
-			return (data->cmd_path);
+			cmd_path = str;
+		if (!access(cmd_path, F_OK))
+			return (cmd_path);
 	}
 	ft_free_lines(paths);
 	return (0);
 }
 
-static int	custom_builtins(char *str, t_builtins *data)
+int	check_builtins(char *str)
 {
-	if (ft_isspace_null(str[4]) && !ft_strncmp(str, "echo", 4))
-		data->cmd_to_execute = "echo";
-	else if (ft_isspace_null(str[2]) && !ft_strncmp(str, "cd", 2))
-		data->cmd_to_execute = "cd";
-	else if (ft_isspace_null(str[3]) && !ft_strncmp(str, "pwd", 3))
-		data->cmd_to_execute = "pwd";
-	else if (ft_isspace_null(str[6]) && !ft_strncmp(str, "export", 6))
-		data->cmd_to_execute = "export";
-	else if (ft_isspace_null(str[5]) && !ft_strncmp(str, "unset", 5))
-		data->cmd_to_execute = "unset";
-	else if (ft_isspace_null(str[3]) && !ft_strncmp(str, "env", 3))
-		data->cmd_to_execute = "env";
-	else if (ft_isspace_null(str[4]) && !ft_strncmp(str, "exit", 4))
-		data->cmd_to_execute = "exit";
-	else
-		return (FALSE);
-	return (TRUE);
+	if (!ft_strcmp(str, "exit"))
+		return (1);
+	else if (!ft_strcmp(str, "echo"))
+		return (1);
+	else if (!ft_strcmp(str, "cd"))
+		return (1);
+	else if (!ft_strcmp(str, "pwd"))
+		return (1);
+	else if (!ft_strcmp(str, "export"))
+		return (1);
+	else if (!ft_strcmp(str, "unset"))
+		return (1);
+	else if (!ft_strcmp(str, "env"))
+		return (1);
+	return (0);
 }
 
 int	valid_input(t_builtins *data, t_data *d)
 {
-	if (custom_builtins(*data->cmd, data) == TRUE)
-		return (CUSTOM);
-	if (!find_cmd(*data->cmd, d->env, data))
+	(void)d;
+	(void)data;
+	//if (custom_builtins(*data->cmd, data) == TRUE)
+	//	return (CUSTOM);
+	/*if (!find_cmd(*data->cmd_with_path, d->env))
 	{
-		if (ft_strchr(*data->cmd, '/'))
-			printf("bash: %s: No such file or directory\n", *data->cmd);
+		if (ft_strchr(*data->cmd_with_path, '/'))
+			printf("bash: %s: No such file or directory\n",
+					*data->cmd_with_path);
 		else
-			printf("%s: command not found\n", *data->cmd);
+			printf("%s: command not found\n", *data->cmd_with_path);
 		return (FALSE);
 	}
-	if (execve(find_cmd(*data->cmd, d->env, data), data->cmd, d->env) == -1)
-		return (TRUE);
-	return (TRUE);
+	if (execve(find_cmd(*data->cmd, d->env), data->cmd, d->env) == -1)
+		return (FALSE);
+	*/return (TRUE);
 }
 
-int	execute_builtin(t_builtins *data, t_data *d)
+int	execute_builtin(t_data *d, t_lst *l)
 {
-	if (!ft_strncmp(data->cmd_to_execute, "echo", 4))
-		cmd_echo(data, d);
-	else if (!ft_strncmp(data->cmd_to_execute, "cd", 2))
-		cmd_cd(data, d);
-	else if (!ft_strncmp(data->cmd_to_execute, "pwd", 3))
+	if (!ft_strcmp(l->cmd, "echo"))
+		cmd_echo(l);
+	//else if (!ft_strcmp(l->cmd, "cd"))
+	//	return (cmd_cd(data, d), 1);
+	else if (!ft_strcmp(l->cmd, "pwd"))
 		cmd_pwd();
-	else if (!ft_strncmp(data->cmd_to_execute, "export", 6))
+	else if (!ft_strcmp(l->cmd, "export"))
+		cmd_export(d, l);
+	else if (!ft_strcmp(l->cmd, "unset"))
 		return (0);
-	else if (!ft_strncmp(data->cmd_to_execute, "unset", 5))
-		return (0);
-	else if (!ft_strncmp(data->cmd_to_execute, "env", 3))
-		cmd_env(d->env);
-	else if (!ft_strncmp(data->cmd_to_execute, "exit", 4))
-		cmd_exit(data, d);
+	else if (!ft_strcmp(l->cmd, "env"))
+		cmd_env(d, l);
+	else if (!ft_strcmp(l->cmd, "exit"))
+		cmd_exit(d);
 	return (0);
 }
