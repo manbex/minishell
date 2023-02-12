@@ -112,7 +112,7 @@ int					get_cmd(t_data *d);
 int					valid_input(t_builtins *data, t_data *d);
 int					execute_builtin(t_data *d, t_lst *l);
 void				cmd_echo(t_lst *l);
-int					cmd_cd(t_builtins *data, t_data *d);
+int					cmd_cd(t_data *d, t_lst *l);
 int					cmd_pwd(void);
 int					cmd_export(t_data *d, t_lst *l);
 void				cmd_env(t_data *d, t_lst *l);

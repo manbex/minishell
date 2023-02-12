@@ -97,8 +97,8 @@ int	execute_builtin(t_data *d, t_lst *l)
 {
 	if (!ft_strcmp(l->cmd, "echo"))
 		cmd_echo(l);
-	//else if (!ft_strcmp(l->cmd, "cd"))
-	//	return (cmd_cd(data, d), 1);
+	else if (!ft_strcmp(l->cmd, "cd"))
+		cmd_cd(d, l);
 	else if (!ft_strcmp(l->cmd, "pwd"))
 		cmd_pwd();
 	else if (!ft_strcmp(l->cmd, "export"))
