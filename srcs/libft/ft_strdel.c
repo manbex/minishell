@@ -1,33 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_env.c                                          :+:      :+:    :+:   */
+/*   ft_strdel.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/29 16:21:43 by julmuntz          #+#    #+#             */
-/*   Updated: 2023/02/13 00:21:30 by julmuntz         ###   ########.fr       */
+/*   Created: 2023/02/12 19:43:21 by julmuntz          #+#    #+#             */
+/*   Updated: 2023/02/12 19:43:26 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-void	cmd_env(t_data *d, t_lst *l)
+void	ft_strdel(char **s)
 {
-	t_export	*current;
-	int			i;
-
-	current = d->x;
-	(void)current;
-	if (!l->arg[1])
+	if (s && *s)
 	{
-		i = 0;
-		while (d->env[i])
-		{
-			printf("%s\n", d->env[i]);
-			i++;
-		}
+		free(*s);
+		*s = NULL;
 	}
-	else
-		printf("env: '%s': No such file or directory\n", l->arg[1]);
 }

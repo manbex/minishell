@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:19:46 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/12 02:43:53 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/13 00:16:24 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,28 +16,11 @@ void	exit_shell(t_data *d, int code)
 {
 	rl_clear_history();
 	free(d->prompt);
-	free_export(d->node);
+	free_export(d->x);
 	ft_free_tab(d->env);
 	ft_lst_free(d->l);
 	free(d->tmp);
 	exit(code);
-}
-
-// fonction temporaire pour afficher les commandes apres parsing
-void	ft_print_lst(t_lst *l)
-{
-	while (l)
-	{
-		printf("cmd = %s\n", l->cmd);
-		printf("arg= ");
-		print_tab(l->arg);
-		printf("infile= ");
-		print_redir(l->infile);
-		printf("outfile= ");
-		print_redir(l->outfile);
-		printf("\n");
-		l = l->next;
-	}
 }
 
 int	ft_history(t_data *d, char **str)
@@ -65,7 +48,7 @@ void	prompt(t_data *d)
 	str = NULL;
 	d->tmp = NULL;
 	d->prompt = NULL;
-	d->node = create_export_list(d->env);
+	d->x = create_export_list(d->env);
 	while (1)
 	{
 		signal(SIGQUIT, SIG_IGN);
@@ -74,7 +57,10 @@ void	prompt(t_data *d)
 			return (exit_shell(d, EXIT_FAILURE));
 		str = readline(d->prompt);
 		if (!str)
+		{
+			write(1, "exit\n", 5);
 			return (exit_shell(d, EXIT_FAILURE));
+		}
 		if (ft_history(d, &str) || parsing(d, str) || exe_cmd(d))
 			return (exit_shell(d, EXIT_FAILURE));
 		free(d->prompt);

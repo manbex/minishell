@@ -6,7 +6,7 @@
 #    By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/27 17:17:08 by julmuntz          #+#    #+#              #
-#    Updated: 2023/02/12 02:00:56 by julmuntz         ###   ########.fr        #
+#    Updated: 2023/02/12 21:16:54 by julmuntz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,6 @@ NAME		=	minishell
 SRC_DIR		=	srcs/
 SRC 		=	main.c					\
 				main2.c					\
-				exe_cmd.c				\
 				$(addprefix parsing/,	\
 				env.c					\
 				tok_utils.c				\
@@ -29,9 +28,12 @@ SRC 		=	main.c					\
 				ft_tok_join.c			\
 				remove_quotes.c			\
 				)						\
+				$(addprefix exec/,		\
+				execute.c				\
+				check_builtin.c			\
+				search_path.c			\
+				)						\
 				$(addprefix builtins/,	\
-				get_cmd.c				\
-				check_input.c			\
 				cmd_echo.c				\
 				cmd_pwd.c				\
 				cmd_export.c			\
@@ -62,6 +64,7 @@ SRC 		=	main.c					\
 				ft_bigcat.c				\
 				ft_strcat.c				\
 				ft_sort_array.c			\
+				ft_strdel.c				\
 				)
 
 OBJ_DIR		=	obj/
