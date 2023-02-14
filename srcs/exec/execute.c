@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exe_cmd.c                                          :+:      :+:    :+:   */
+/*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 17:27:16 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/12 19:21:36 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/13 20:56:52 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,36 @@ void	free_stuff(t_data *d)
 	free(d->tmp);
 }
 
+void	exec_error(char *str, char **arg, t_data *d)
+{
+	int		error;
+	struct stat	*buf;
+
+	error = errno;
+	if ((errno == 2 && !ft_strchr(str, '/')) || !strcmp(str, ".") || !ft_strcmp(str, ".."))
+		ft_fprintf(STDERR_FILENO, "minishell: %s: command not found\n", arg[0]);
+	else if (error == 13)
+	{
+		buf = malloc(sizeof(struct stat));
+		if (!buf)
+			write(2, "Error when calling malloc\n", 26);
+		else if (stat(str, buf) && errno != EACCES)
+			write(STDERR_FILENO, "Error when calling stat\n", 24);
+		else if (S_ISDIR(buf->st_mode))
+			ft_fprintf(STDERR_FILENO, "minishell: %s: is a directory\n", str);
+		else
+			ft_fprintf(STDERR_FILENO, "minishell: %s: %s\n", str, strerror(error));
+		free(buf);
+	}
+	else
+		ft_fprintf(STDERR_FILENO, "minishell: %s: %s\n", str, strerror(error));
+	free(str);
+	ft_free_tab(arg);
+	ft_free_tab(d->env);
+	exit(EXIT_SUCCESS);
+
+}
+
 void	child(t_data *d, t_lst *l)
 {
 	char	*str;
@@ -31,20 +61,19 @@ void	child(t_data *d, t_lst *l)
 		execute_builtin(d, l);
 		exit_shell(d, EXIT_SUCCESS);
 	}
-	str = strdup(l->cmd);
-	arg = l->arg;
-	l->arg = NULL;
+	str = ft_strdup(l->cmd);
+	if (!str)
+		exit_shell(d, EXIT_FAILURE);
 	if (find_cmd(&str, d->env))
 	{
-		write(2, "Unexpected error\n", 17);
 		free(str);
 		exit_shell(d, EXIT_FAILURE);
 	}
+	arg = l->arg;
+	l->arg = NULL;
 	free_stuff(d);
 	execve(str, arg, d->env);
-	free(str);
-	ft_free_tab(arg);
-	exit(EXIT_FAILURE);
+	exec_error(str, arg, d);
 }
 
 int	exe_cmd(t_data *d)

@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 18:19:09 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/13 00:47:39 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/13 17:14:41 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # define COLOR_D "\1\033[38;5;223m\2"
 # define COLOR_E "\1\033[0m\2"
 # define PROMPT "@minishell:"
-# define CUSTOM 10
 # define _GNU_SOURCE
 
 # include <stdio.h>
@@ -34,7 +33,9 @@
 # include <string.h>
 # include <sys/wait.h>
 # include <signal.h>
+# include <errno.h>
 # include "libft.h"
+#include <sys/stat.h>
 
 typedef struct s_tok
 {
@@ -53,6 +54,7 @@ typedef struct s_lst
 	int				pid;
 	char			*cmd;
 	char			**arg;
+	char			**arg_d;
 	t_redir			*infile;
 	t_redir			*outfile;
 	struct s_lst	*next;
@@ -101,6 +103,7 @@ int					remove_quotes(char *s, char **str);
 
 int					exe_cmd(t_data *d);
 int					find_cmd(char **str, char **env);
+char				*find_dir(char *str, char **env);
 int					check_builtins(char *str);
 int					execute_builtin(t_data *d, t_lst *l);
 

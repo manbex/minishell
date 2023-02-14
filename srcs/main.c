@@ -75,7 +75,7 @@ int	main(int argc, char **argv, char **env)
 	(void)argv;
 	d.l = NULL;
 	if (argc != 1)
-		return (write(2, "Error\n", 6), 1);
+		return (write(STDERR_FILENO, "Too much arguments\n", 19), 1);
 	d.env = init_env(env);
 	if (!d.env)
 		return (write(2, "Error\n", 6), 1);
