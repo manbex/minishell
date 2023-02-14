@@ -54,7 +54,6 @@ typedef struct s_lst
 	int				pid;
 	char			*cmd;
 	char			**arg;
-	char			**arg_d;
 	t_redir			*infile;
 	t_redir			*outfile;
 	struct s_lst	*next;
@@ -76,6 +75,9 @@ typedef struct s_data
 	char			**env;
 	char			*prompt;
 	t_export		*x;
+	int				pipe;
+	int				in;
+	int				out;
 }					t_data;
 
 char				**free_tab(char **tab, int i);

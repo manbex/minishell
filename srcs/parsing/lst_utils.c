@@ -37,7 +37,6 @@ t_lst	*ft_lst_free(t_lst *l)
 		l = l->next;
 		free(tmp->cmd);
 		ft_free_tab(tmp->arg);
-		ft_free_tab(tmp->arg_d);
 		ft_free_redir(tmp->infile);
 		ft_free_redir(tmp->outfile);
 		free(tmp);

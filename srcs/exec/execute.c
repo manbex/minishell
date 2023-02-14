@@ -55,12 +55,32 @@ void	child(t_data *d, t_lst *l)
 {
 	char	*str;
 	char	**arg;
+	int		error;
 
+	error = 0;
 	if (check_builtins(l->cmd))
 	{
 		execute_builtin(d, l);
+		if (d->in != STDIN_FILENO)
+			close(d->in);
+		if (d->out != STDOUT_FILENO)
+			close(d->out);
 		exit_shell(d, EXIT_SUCCESS);
 	}
+	if (d->in != STDIN_FILENO)
+	{
+		close(0);
+		error = dup2(d->in, 0);
+		close(d->in);
+	}
+	if (d->out != STDOUT_FILENO)
+	{
+		close(1);
+		error += dup2(d->out, 1);
+		close(d->out);
+	}
+	if (error < 0)
+		exit_shell(d, EXIT_FAILURE);
 	str = ft_strdup(l->cmd);
 	if (!str)
 		exit_shell(d, EXIT_FAILURE);
@@ -79,6 +99,7 @@ void	child(t_data *d, t_lst *l)
 int	exe_cmd(t_data *d)
 {
 	t_lst	*tmp;
+	int		pipefd[2];
 
 	if (!d->l)
 		return (0);
@@ -87,9 +108,32 @@ int	exe_cmd(t_data *d)
 	tmp = d->l;
 	while (tmp)
 	{
+		if (tmp == d->l)
+			d->in = STDIN_FILENO;
+		else
+		{
+			close(pipefd[1]);
+			d->in = d->pipe;
+		}
+		if (tmp->next)
+		{
+			pipe(pipefd);
+			d->out = pipefd[1];
+			d->pipe = pipefd[0];
+		}
+		else
+			d->out = STDOUT_FILENO;
 		tmp->pid = fork();
 		if (tmp->pid == 0)
+		{
+			if (tmp->next)
+				close(d->pipe);
 			child(d, tmp);
+		}
+		if (d->in != STDIN_FILENO)
+			close(d->in);
+		if (d->out != STDOUT_FILENO)
+			close(d->out);
 		tmp = tmp->next;
 	}
 	tmp = d->l;
