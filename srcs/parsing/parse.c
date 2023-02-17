@@ -92,6 +92,8 @@ int	parsing(t_data *d, char *str)
 	t = NULL;
 	if (*str == 0)
 		return (free(str), 0);
+	d->in = STDIN_FILENO;
+	d->out = STDOUT_FILENO;
 	str = expand_vars(d, str);
 	if (!str)
 		return (write(2, "Unexpected error\n", 17), 1);

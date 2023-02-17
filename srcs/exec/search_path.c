@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 16:11:22 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/13 17:31:24 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/15 12:47:39 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	find_cmd(char **str, char **env)
 	char	*cmd_path;
 
 	i = -1;
-	if (ft_strchr(*str, '/') || !ft_strcmp(*str, ".") || !ft_strcmp(*str, ".."))
+	if (ft_strchr(*str, '/'))
 		return (0);
 	paths = ft_split(find_paths(env), ':');
 	if (!paths)
