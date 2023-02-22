@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 17:27:16 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/14 19:55:00 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/20 17:29:25 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,15 @@ void	exec_error(char *str, char **arg, t_data *d)
 	struct stat	*buf;
 
 	error = errno;
-	if ((errno == 2 && !ft_strchr(str, '/')) || !strcmp(str, ".") || !ft_strcmp(str, ".."))
+	if ((errno == 2 && !ft_strchr(str, '/')) || !ft_strcmp(str, ".") || !ft_strcmp(str, ".."))
 		ft_fprintf(STDERR_FILENO, "minishell: %s: command not found\n", arg[0]);
 	else if (error == 13)
 	{
 		buf = malloc(sizeof(struct stat));
 		if (!buf)
-			write(2, "Error when calling malloc\n", 26);
+			write(2, "minishell: malloc failed\n", 25);
 		else if (stat(str, buf) && errno != EACCES)
-			write(STDERR_FILENO, "Error when calling stat\n", 24);
+			write(STDERR_FILENO, "minishell: stat failed\n", 23);
 		else if (S_ISDIR(buf->st_mode))
 			ft_fprintf(STDERR_FILENO, "minishell: %s: is a directory\n", str);
 		else
@@ -61,10 +61,6 @@ void	child(t_data *d, t_lst *l)
 	if (check_builtins(l->cmd))
 	{
 		execute_builtin(d, l);
-		if (d->in != STDIN_FILENO)
-			close(d->in);
-		if (d->out != STDOUT_FILENO)
-			close(d->out);
 		exit_shell(d, EXIT_SUCCESS);
 	}
 	if (d->in != STDIN_FILENO)
@@ -101,16 +97,18 @@ int	exe_cmd(t_data *d)
 	t_lst	*tmp;
 	int		pipefd[2];
 
+	d->heredoc = 0;
 	if (!d->l)
 		return (0);
 	if (!d->l->next && check_builtins(d->l->cmd))
 	{
 		redirect(d, d->l);
+		if (d->heredoc)
+		{
+			d->heredoc = 0;
+			unlink(".heredoc.tmp");
+		}
 		execute_builtin(d, d->l);
-		if (d->in != STDIN_FILENO)
-			close(d->in);
-		if (d->out != STDOUT_FILENO)
-			close(d->out);
 		return (0);
 	}
 	tmp = d->l;
@@ -138,6 +136,11 @@ int	exe_cmd(t_data *d)
 			if (tmp->next)
 				close(d->pipe);
 			child(d, tmp);
+		}
+		if (d->heredoc)
+		{
+			d->heredoc = 0;
+			unlink(".heredoc.tmp");
 		}
 		if (d->in != STDIN_FILENO)
 			close(d->in);

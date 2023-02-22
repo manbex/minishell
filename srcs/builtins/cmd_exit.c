@@ -16,8 +16,8 @@ void	cmd_exit(t_data *d)
 {
 	write(d->out, "exit\n", 5);
 	if (d->in != STDIN_FILENO)
-		close(d->in);
+			close(d->in);
 	if (d->out != STDOUT_FILENO)
-		close(d->out);
+			close(d->out);
 	exit_shell(d, EXIT_SUCCESS);
 }
