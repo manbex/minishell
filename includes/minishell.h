@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 18:19:09 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/20 19:22:59 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/03/02 01:01:58 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ typedef struct s_redir
 typedef struct s_lst
 {
 	int				pid;
+	int				called;
 	char			*cmd;
 	char			**arg;
 	t_redir			*infile;
@@ -68,22 +69,33 @@ typedef struct s_export
 	struct s_export	*next;
 }					t_export;
 
+typedef struct s_garbge
+{
+	void			*ptr;
+	struct s_garbge	*next;
+}					t_garbage;
+
 typedef struct s_data
 {
 	t_lst			*l;
 	char			*tmp;
 	char			**env;
+	int				env_size;
 	char			*prompt;
 	t_export		*x;
+	t_garbage		*g;
+	int				pipefd[2];
 	int				pipe;
 	int				in;
 	int				out;
 	int				heredoc;
 }					t_data;
 
+extern int	g_exit_code;
+
 char				**free_tab(char **tab, int i);
 void				ft_free_redir(t_redir *ptr);
-char				**init_env(char **env);
+char				**init_env(char **env, t_data *d);
 int					parsing(t_data *d, char *str);
 int					init_list(t_data *d, t_tok *t);
 int					new_tok(t_tok **t, char *str, int j);
@@ -105,6 +117,9 @@ int					ft_tok_join(t_tok *t, char **str);
 int					remove_quotes(char *s, char **str);
 
 int					exe_cmd(t_data *d);
+void				child(t_data *d, t_lst *l);
+void				exec_error(char *str, char **arg, t_data *d);
+void				free_stuff(t_data *d);
 int					redirect(t_data *d, t_lst *l);
 int					find_cmd(char **str, char **env);
 int					check_builtins(char *str);
@@ -112,19 +127,21 @@ int					execute_builtin(t_data *d, t_lst *l);
 int					refresh_prompt(t_data *d);
 void				handle_ctrl_c(int sig);
 
-void				cmd_echo(t_data *d, t_lst *l);
+int					cmd_echo(t_data *d, t_lst *l);
 int					cmd_cd(t_lst *l);
 int					cmd_pwd(t_data *d);
-void				cmd_export(t_data *d, t_lst *l);
-void				cmd_unset(t_data *d, t_lst *l);
-void				cmd_env(t_data *d, t_lst *l);
-void				cmd_exit(t_data *d);
+int					cmd_exit(t_data *d);
 
-t_export			*init_export(char **env);
-void				free_export(t_export *node);
+t_export			*init_export(t_data *d);
+void				copy_export(t_export *src, t_export **dst, t_data *d);
+void				sort_export(t_export **node);
 int					var_cmd(t_data *d, t_lst *l);
-int					get_var(t_data *d, t_lst *l, int *plus);
-void				create_var(t_export *current, t_data *d, int found);
-void				update_var(t_export *current, t_data *d, int *plus);
+int					get_var(t_data *d, char *arg, int *plus);
+int					create_var(t_export *current, t_data *d, int found);
+int					update_var(t_export *curr, t_data *d, char *arg, int *plus);
+char				**update_env(t_data *d);
+
+void				*galloc(void *ptr, size_t size, t_data *d);
+void				free_garbage(t_garbage **g);
 
 #endif
