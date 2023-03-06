@@ -6,11 +6,53 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 18:36:04 by julmuntz          #+#    #+#             */
-/*   Updated: 2023/02/19 15:35:32 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/02/28 21:13:45 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	*galloc(void *ptr, size_t size, t_data *d)
+{
+	void		*new;
+	t_garbage	*new_garbage;
+
+	if (ptr == NULL)
+	{
+		new = malloc(size);
+		if (new == NULL)
+			return (NULL);
+	}
+	else if (size == 0)
+		return (free(ptr), NULL);
+	else
+	{
+		new = ft_realloc(ptr, size);
+		if (new == NULL)
+			return (NULL);
+	}
+	new_garbage = malloc(sizeof(t_garbage));
+	if (new_garbage != NULL)
+	{
+		new_garbage->ptr = new;
+		new_garbage->next = d->g;
+		d->g = new_garbage;
+	}
+	return (new);
+}
+
+void	free_garbage(t_garbage **g)
+{
+	t_garbage	*current;
+
+	while (*g)
+	{
+		current = *g;
+		*g = (*g)->next;
+		free(current->ptr);
+		free(current);
+	}
+}
 
 static int	user_dir_name(char *cur_dir)
 {

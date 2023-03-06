@@ -6,13 +6,41 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 18:54:10 by julmuntz          #+#    #+#             */
-/*   Updated: 2023/02/16 17:49:26 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/03/02 01:08:30 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	print_export(t_export *current, t_data *d, t_lst *l)
+static int	print_export(t_export *current, t_data *d, t_lst *l)
+{
+	t_export	*sorted;
+	t_export	*tmp;
+
+	if (!l->arg[1])
+	{
+		sorted = NULL;
+		copy_export(current, &sorted, d);
+		sort_export(&sorted);
+		tmp = sorted;
+		while (tmp)
+		{
+			if (ft_strcmp(tmp->key, "_") && ft_strcmp(tmp->value, getenv("_")))
+			{
+				if (tmp->key && !tmp->value)
+					ft_fprintf(d->out, "declare -x %s\n", tmp->key);
+				else if (tmp->key && tmp->value)
+					ft_fprintf(d->out, "declare -x %s=\"%s\"\n", tmp->key,
+						tmp->value);
+			}
+			tmp = tmp->next;
+		}
+		return (0);
+	}
+	return (0);
+}
+
+static int	print_env(t_export *current, t_data *d, t_lst *l)
 {
 	if (!l->arg[1])
 	{
@@ -20,56 +48,38 @@ static void	print_export(t_export *current, t_data *d, t_lst *l)
 		while (current)
 		{
 			if (ft_strcmp(current->key, "_")
-				&& ft_strcmp(current->value, getenv("_")))
-			{
-				if (current->key && !current->value)
-					ft_fprintf(d->out, "declare -x %s\n", current->key);
-				else if (current->key && current->value)
-					ft_fprintf(d->out,
-						"declare -x %s=\"%s\"\n", current->key, current->value);
-			}
-			current = current->next;
-		}
-	}
-}
-
-static void	print_env(t_export *current, t_data *d, t_lst *l)
-{
-	if (!l->arg[1])
-	{
-		current = d->x;
-		while (current)
-		{
-			if (current->value)
+				&& ft_strcmp(current->value, getenv("_")) && current->value)
 				ft_fprintf(d->out,
 					"%s=%s\n", current->key, current->value);
 			current = current->next;
 		}
+		ft_fprintf(d->out, "_=/usr/bin/env\n");
+		return (0);
 	}
-	else
-		ft_fprintf(STDERR_FILENO,
-			"env: '%s': No such file or directory\n", l->arg[1]);
+	ft_fprintf(STDERR_FILENO,
+		"env: '%s': No such file or directory\n", l->arg[1]);
+	return (0);
 }
 
-static void	unset_var(t_export *current, const char *key)
+static int	unset_var(t_export *current, t_data *d, const char *arg)
 {
 	t_export	*node;
 	t_export	*previous;
 
 	node = current;
 	previous = NULL;
+	if (!arg)
+		return (0);
 	while (node != NULL)
 	{
-		if (!ft_strcmp(node->key, key))
+		if (!ft_strcmp(node->key, arg))
 		{
 			if (previous == NULL)
 				current = node->next;
 			else
 				previous->next = node->next;
-			ft_strdel(&node->key);
-			ft_strdel(&node->value);
-			free(node);
-			return ;
+			d->env_size--;
+			return (0);
 		}
 		else
 		{
@@ -77,45 +87,58 @@ static void	unset_var(t_export *current, const char *key)
 			node = node->next;
 		}
 	}
-	return ;
+	return (0);
 }
 
-static void	var_cmd2(t_export *current, t_data *d, t_lst *l)
+static int	export_var(t_export *current, t_data *d, char *arg)
 {
-	if (!ft_strcmp(l->cmd, "unset") && l->arg[1])
-		unset_var(current, l->arg[1]);
-	else if (!ft_strcmp(l->cmd, "export"))
-		print_export(current, d, l);
-	else if (!ft_strcmp(l->cmd, "env"))
-		print_env(current, d, l);
+	int	plus;
+	int	found;
+
+	plus = 0;
+	found = 0;
+	current = d->x;
+	if (get_var(d, arg, &plus))
+		return (1);
+	while (current)
+	{
+		if (!ft_strcmp(current->key, d->x->new_key) && d->x->new_key)
+		{
+			found = 1;
+			if (update_var(current, d, arg, &plus))
+				return (1);
+			break ;
+		}
+		current = current->next;
+	}
+	if (create_var(current, d, found))
+		return (1);
+	return (0);
 }
 
 int	var_cmd(t_data *d, t_lst *l)
 {
 	t_export	*current;
-	int			plus;
-	int			found;
+	int			i;
 
-	plus = 0;
-	found = 0;
+	i = 0;
 	current = d->x;
-	if (!ft_strcmp(l->cmd, "export") && l->arg[1])
+	if (!ft_strcmp(d->l->cmd, "export") && l->arg[1])
 	{
-		if (get_var(d, l, &plus))
-			return (1);
-		while (current)
-		{
-			if (!ft_strcmp(current->key, d->x->new_key) && d->x->new_key)
-			{
-				found = 1;
-				update_var(current, d, &plus);
-				break ;
-			}
-			current = current->next;
-		}
-		create_var(current, d, found);
+		while (l->arg[++i])
+			if (export_var(current, d, l->arg[i]))
+				return (1);
 	}
-	var_cmd2(current, d, l);
+	else if (!ft_strcmp(d->l->cmd, "unset") && l->arg[1])
+	{
+		while (l->arg[++i])
+			if (unset_var(current, d, l->arg[i]))
+				return (1);
+	}
+	if (!ft_strcmp(l->cmd, "export") && print_export(current, d, l))
+		return (1);
+	else if (!ft_strcmp(l->cmd, "env") && print_env(current, d, l))
+		return (1);
 	return (0);
 }
 

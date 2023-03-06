@@ -1,34 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_cd.c                                           :+:      :+:    :+:   */
+/*   ft_realloc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/01 21:41:00 by julmuntz          #+#    #+#             */
-/*   Updated: 2023/02/24 11:42:24 by julmuntz         ###   ########.fr       */
+/*   Created: 2023/02/28 20:30:38 by julmuntz          #+#    #+#             */
+/*   Updated: 2023/02/28 21:13:30 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	cmd_cd(t_lst *l)
+void	*ft_realloc(void *ptr, size_t size)
 {
-	if (!ft_strcmp(l->arg[1], "~") || !l->arg[1])
+	char	*tmp;
+
+	tmp = ptr;
+	if (ptr != NULL)
 	{
-		chdir(getenv("HOME"));
-		return (0);
+		size += ft_strlen(ptr);
+		ptr = ft_calloc(1, size);
+		ft_strcpy(ptr, tmp);
+		free(tmp);
 	}
-	if (l->arg[2])
-	{
-		ft_fprintf(STDERR_FILENO, "minishell: %s: too many arguments\n", l->cmd);
-		return (0);
-	}
-	if (chdir(l->arg[1]))
-	{
-		ft_fprintf(STDERR_FILENO, "minishell: %s: %s\n", l->arg[1],
-			strerror(errno));
-		return (0);
-	}
-	return (0);
+	else
+		ptr = ft_calloc(1, size);
+	return (ptr);
 }

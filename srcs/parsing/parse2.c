@@ -59,6 +59,7 @@ static int	init_cmd(t_data *d, t_tok *t)
 	new->outfile = NULL;
 	new->arg = NULL;
 	new->next = NULL;
+	new->called = 0;
 	parse_tok(&t, &infile, &outfile, &arg);
 	free_tok(t);
 	if (init_arg(new, arg))
