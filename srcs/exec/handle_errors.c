@@ -8,13 +8,22 @@ void	free_stuff(t_data *d)
 	free(d->tmp);
 }
 
+static void	child_exit_error(char *str, char **arg, t_data *d, int error)
+{
+	free(str);
+	ft_free_tab(arg);
+	free_garbage(&d->g);
+	exit(error);
+}
+
 void	exec_error(char *str, char **arg, t_data *d)
 {
-	int		error;
+	int			error;
 	struct stat	*buf;
 
 	error = errno;
-	if ((errno == 2 && !ft_strchr(str, '/')) || !ft_strcmp(str, ".") || !ft_strcmp(str, ".."))
+	if ((errno == 2 && !ft_strchr(str, '/')) \
+	|| !ft_strcmp(str, ".") || !ft_strcmp(str, ".."))
 		ft_fprintf(STDERR_FILENO, "minishell: %s: command not found\n", arg[0]);
 	else if (error == 13)
 	{
@@ -26,13 +35,11 @@ void	exec_error(char *str, char **arg, t_data *d)
 		else if (S_ISDIR(buf->st_mode))
 			ft_fprintf(STDERR_FILENO, "minishell: %s: is a directory\n", str);
 		else
-			ft_fprintf(STDERR_FILENO, "minishell: %s: %s\n", str, strerror(error));
+			ft_fprintf(STDERR_FILENO, \
+			"minishell: %s: %s\n", str, strerror(error));
 		free(buf);
 	}
 	else
 		ft_fprintf(STDERR_FILENO, "minishell: %s: %s\n", str, strerror(error));
-	free(str);
-	ft_free_tab(arg);
-	free_garbage(&d->g);
-	exit(EXIT_SUCCESS);
+	child_exit_error(str, arg, d, error);
 }

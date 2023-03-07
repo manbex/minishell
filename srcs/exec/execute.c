@@ -49,7 +49,7 @@ static void	open_pipes(t_data *d, t_lst *tmp, int *pipe_err, int *error)
 {
 	if (tmp == d->l)
 		d->in = STDIN_FILENO;
-	else
+	else if (!*pipe_err)
 	{
 		close(d->pipefd[1]);
 		d->in = d->pipe;
@@ -66,8 +66,35 @@ static void	open_pipes(t_data *d, t_lst *tmp, int *pipe_err, int *error)
 	}
 	else
 		d->out = STDOUT_FILENO;
-	if (!pipe_err && redirect(d, tmp))
+	if (!*pipe_err && redirect(d, tmp))
 		*error = 1;
+}
+
+static void	call_childs(t_data *d, t_lst *tmp, int *pipe_err, int *error)
+{
+	if (!*pipe_err && !*error && tmp->cmd)
+	{
+		tmp->pid = fork();
+		if (tmp->pid == 0)
+		{
+			if (tmp->next)
+				close(d->pipe);
+			child(d, tmp);
+		}
+		if (tmp->pid == -1)
+			ft_fprintf(STDERR_FILENO, "minishell: %s\n", strerror(errno));
+		else
+			tmp->called = 1;
+	}
+	if (d->heredoc)
+	{
+		d->heredoc = 0;
+		unlink(".heredoc.tmp");
+	}
+	if (d->in != STDIN_FILENO && d->in != -1)
+		close(d->in);
+	if (d->out != STDOUT_FILENO && d->out != -1)
+		close(d->out);
 }
 
 int	exe_cmd(t_data *d)
@@ -85,29 +112,10 @@ int	exe_cmd(t_data *d)
 	tmp = d->l;
 	while (tmp)
 	{
+		tmp->called = 0;
 		error = 0;
 		open_pipes(d, tmp, &pipe_err, &error);
-		if (!pipe_err && !error && tmp->cmd)
-			tmp->pid = fork();
-		if (!pipe_err && !error && tmp->cmd && tmp->pid == 0)
-		{
-			if (tmp->next)
-				close(d->pipe);
-			child(d, tmp);
-		}
-		if (!pipe_err && !error && tmp->cmd && tmp->pid == -1)
-			ft_fprintf(STDERR_FILENO, "minishell: %s\n", strerror(errno));
-		else
-			tmp->called = 1;
-		if (d->heredoc)
-		{
-			d->heredoc = 0;
-			unlink(".heredoc.tmp");
-		}
-		if (d->in != STDIN_FILENO)
-			close(d->in);
-		if (d->out != STDOUT_FILENO)
-			close(d->out);
+		call_childs(d, tmp, &pipe_err, &error);
 		tmp = tmp->next;
 	}
 	wait_childs(d);
