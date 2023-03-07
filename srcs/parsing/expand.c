@@ -42,8 +42,18 @@ static int	replace_var2(t_data *d, t_tok *t)
 
 static int	replace_var(t_data *d, t_tok *t)
 {
+	char	*tmp;
+
 	while (t)
 	{
+		if (*t->str == '$' && *(t->str + 1) == '?')
+		{
+			tmp = ft_itoa(g_exit_code);
+			if (!tmp)
+				return (1);
+			free(t->str);
+			t->str = tmp;
+		}
 		if (*t->str == '$' && *(t->str + 1) && replace_var2(d, t))
 			return (1);
 		t = t->next;
