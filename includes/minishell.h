@@ -79,6 +79,7 @@ typedef struct s_data
 {
 	t_lst			*l;
 	char			*tmp;
+	char			*user;
 	char			**env;
 	int				env_size;
 	char			*prompt;
@@ -122,6 +123,8 @@ int					execute_builtin(t_data *d, t_lst *l);
 int					refresh_prompt(t_data *d);
 void				handle_ctrl_c(int sig);
 void				free_stuff(t_data *d);
+void				child_exit_error(char *str, char **arg, t_data *d, \
+int error);
 void				exit_shell(t_data *d, int code);
 
 //					BUILTINS
