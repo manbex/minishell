@@ -44,8 +44,11 @@ static int	slvl_init(char *env, char **dest, t_data *d)
 	str = itoa(n, str);
 	if (!str)
 		return (*dest = NULL, 1);
-	*dest = galloc(ft_strjoin("SHLVL=", str), ft_strlen(str) + 7, d);
+	*dest = ft_strjoin("SHLVL=", str);
 	free(str);
+	if (!*dest)
+		return (*dest = NULL, 1);
+	*dest = galloc(*dest, ft_strlen(*dest), d);
 	if (!*dest)
 		return (1);
 	return (0);
@@ -55,6 +58,7 @@ char	**init_env(char **env, t_data *d)
 {
 	int		size;
 	int		i;
+	char	*str;
 	char	**tab;
 
 	size = ft_arrstrlen(env);
@@ -66,12 +70,15 @@ char	**init_env(char **env, t_data *d)
 	{
 		if (!ft_strncmp(env[i], "SHLVL=", 6) \
 		&& slvl_init(env[i], &(tab[i]), d))
-			return (NULL);
+			return (free_garbage(&d->g), NULL);
 		else if (ft_strncmp(env[i], "SHLVL=", 6))
 		{
-			tab[i] = galloc(ft_strdup(env[i]), ft_strlen(env[i]) + 1, d);
+			str = ft_strdup(env[i]);
+			if (!str)
+				return (free_garbage(&d->g), NULL);
+			tab[i] = galloc(str, ft_strlen(env[i]) + 1, d);
 			if (!tab[i])
-				return (NULL);
+				return (free_garbage(&d->g), NULL);
 		}
 		i++;
 	}

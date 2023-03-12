@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:19:46 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/03/07 14:58:09 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/03/12 10:39:19 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,11 @@ int	parse_quotes(char *str)
 	if (str[0] == '"')
 		while (str[i] && str[i] != '"')
 			i++;
-	else
+	else if (str[0] == '\'')
 		while (str[i] && str[i] != '\'')
 			i++;
+	else
+		return (0);
 	if (str[i] == 0)
 		i = 0;
 	return (i);
@@ -66,12 +68,13 @@ static int	parse_line(t_tok **t, char *str)
 	i = 0;
 	while (str[i])
 	{
-		while (str[i] == ' ')
+		while (ft_isspace(str[i]))
 			i++;
 		j = is_meta(str + i);
 		if (j == 0)
 		{
-			while (str[i + j] && str[i + j] != ' ' && !is_meta(str + i + j))
+			while (str[i + j] && !ft_isspace(str[i + j])
+				&& !is_meta(str + i + j))
 			{
 				if (str[i + j] == '"' || str[i + j] == '\'')
 					j += parse_quotes(str + i + j);
@@ -103,7 +106,8 @@ int	parsing(t_data *d, char *str)
 		return (ft_puterr("minishell: malloc failed\n"), 1);
 	free(str);
 	if (syntax_check(t))
-		return (free_tok(t), ft_puterr("Syntax error\n"), 0);
+		return (g_exit_code = 2, free_tok(t),
+			ft_puterr("minishell: syntax error\n"), 0);
 	if (init_list(d, t))
 		return (ft_puterr("minishell: malloc failed\n"), 1);
 	return (0);
