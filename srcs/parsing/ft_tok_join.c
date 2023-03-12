@@ -19,7 +19,8 @@ static int	count_size(t_tok *t)
 	i = 1;
 	while (t)
 	{
-		i += (ft_strlen(t->str));
+		if (t->str)
+			i += (ft_strlen(t->str));
 		t = t->next;
 	}
 	return (i);
@@ -39,7 +40,7 @@ int	ft_tok_join(t_tok *t, char **str)
 	while (tmp)
 	{
 		j = 0;
-		while (tmp->str[j])
+		while (tmp->str && tmp->str[j])
 		{
 			(*str)[i] = tmp->str[j];
 			j++;

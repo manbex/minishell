@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:19:46 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/03/02 01:00:08 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/03/12 12:39:18 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,17 +56,16 @@ static int	slvl_init(char *env, char **dest, t_data *d)
 
 char	**init_env(char **env, t_data *d)
 {
-	int		size;
 	int		i;
 	char	*str;
 	char	**tab;
 
-	size = ft_arrstrlen(env);
-	tab = galloc(NULL, (size + 1) * sizeof(char *), d);
+	d->env_size = ft_arrstrlen(env);
+	tab = galloc(NULL, (d->env_size + 1) * sizeof(char *), d);
 	if (!tab)
 		return (NULL);
-	i = 0;
-	while (env && env[i])
+	i = -1;
+	while (env && env[++i])
 	{
 		if (!ft_strncmp(env[i], "SHLVL=", 6) \
 		&& slvl_init(env[i], &(tab[i]), d))
@@ -80,10 +79,8 @@ char	**init_env(char **env, t_data *d)
 			if (!tab[i])
 				return (free_garbage(&d->g), NULL);
 		}
-		i++;
 	}
-	tab[i] = NULL;
-	return (tab);
+	return (tab[i] = NULL, tab);
 }
 
 char	**update_env(t_data *d)

@@ -20,7 +20,8 @@ static int	syntax_check(t_tok *t)
 	{
 		if (((*(t->str) == '>' || *(t->str) == '<') && (!t->next \
 		|| *(t->next->str) == '>' || *(t->next->str) == '<' || \
-		*(t->next->str) == '|')) || (*(t->str) == '|' && !t->next))
+		*(t->next->str) == '|')) || (*(t->str) == '|' && (!t->next || \
+		(t->next && *(t->next->str) == '|'))))
 			return (1);
 		t = t->next;
 	}

@@ -105,8 +105,11 @@ int	cmd_exit(t_data *d)
 	exit_code = g_exit_code;
 	value = 0;
 	error = 0;
-	if (d->in == STDIN_FILENO && d->out == STDOUT_FILENO)
-		ft_puterr("exit\n");
+	if (d->in != STDIN_FILENO)
+		close(d->in);
+	if (d->out != STDOUT_FILENO)
+		close(d->out);
+	ft_puterr("exit\n");
 	if (d->l->arg[1])
 		exit_code = get_code(d, &value, &exit_code, &error);
 	if (error && exit_code == 1)

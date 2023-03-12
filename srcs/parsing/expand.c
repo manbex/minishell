@@ -54,7 +54,13 @@ static int	replace_var(t_data *d, t_tok *t)
 			free(t->str);
 			t->str = tmp;
 		}
-		if (*t->str == '$' && *(t->str + 1) && replace_var2(d, t))
+		if (*t->str == '$' && t->next && (*(t->next->str) == '"' \
+		|| *(t->next->str) == '\''))
+		{
+			free(t->str);
+			t->str = NULL;
+		}
+		else if (*t->str == '$' && *(t->str + 1) && replace_var2(d, t))
 			return (1);
 		t = t->next;
 	}
