@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 22:18:46 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/03/08 18:31:59 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/03/12 20:17:05 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ static int	replace_var(t_data *d, t_tok *t)
 			free(t->str);
 			t->str = tmp;
 		}
-		if (*t->str == '$' && t->next && (*(t->next->str) == '"' \
-		|| *(t->next->str) == '\''))
+		if (*t->str == '$' && !*(t->str + 1) && t->next \
+		&& (*(t->next->str) == '"' || *(t->next->str) == '\''))
 		{
 			free(t->str);
 			t->str = NULL;
@@ -71,13 +71,13 @@ static int	isolate_var_name(char *str)
 {
 	int	i;
 
+	i = 0;
 	if (*str != '$')
 		return (0);
 	if (*(str + 1) == '?')
 		return (2);
 	i = 1;
-	while (str[i] && str[i] != ' ' && str[i] != '$'
-		&& str[i] != '\'' && str[i] != '"')
+	while (ft_isalnum(str[i]) || str[i] == '_')
 		i++;
 	return (i);
 }

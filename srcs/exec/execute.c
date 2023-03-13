@@ -43,7 +43,17 @@ static int	wait_childs(t_data *d)
 		if (tmp->called)
 		{
 			waitpid(tmp->pid, &wstatus, 0);
-			g_exit_code = WEXITSTATUS(wstatus);
+			if (WIFEXITED(wstatus))
+				g_exit_code = WEXITSTATUS(wstatus);
+			else if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == 2)
+					g_exit_code = 130;
+			else if (WIFSIGNALED(wstatus))
+			{
+				ft_puterr("Segmentation fault (core dumped)\n");
+				g_exit_code = 139;
+			}
+			else
+				g_exit_code = 1;
 		}
 		tmp = tmp->next;
 	}
