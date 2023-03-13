@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 17:27:16 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/03/09 20:22:57 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/03/13 14:14:15 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,17 @@ static int	wait_childs(t_data *d)
 		if (tmp->called)
 		{
 			waitpid(tmp->pid, &wstatus, 0);
-			if (WIFEXITED(wstatus))
+			if (g_exit_code == -1)
+				g_exit_code = 130;
+			else if (g_exit_code == -2)
+				g_exit_code = 131;
+			else if (WIFEXITED(wstatus))
 				g_exit_code = WEXITSTATUS(wstatus);
-			else if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == 2)
-					g_exit_code = 130;
 			else if (WIFSIGNALED(wstatus))
 			{
 				ft_puterr("Segmentation fault (core dumped)\n");
 				g_exit_code = 139;
 			}
-			else
-				g_exit_code = 1;
 		}
 		tmp = tmp->next;
 	}
@@ -127,7 +127,8 @@ int	exe_cmd(t_data *d)
 		return (0);
 	if (handle_builtins(d))
 		return (0);
-	signal(SIGINT, &handle_ctrl_c);
+	signal(SIGQUIT, &handle_ctrls);
+	signal(SIGINT, &handle_ctrls);
 	tmp = d->l;
 	while (tmp)
 	{
