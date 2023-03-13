@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static int	is_quotes(char *s, int i, int j)
+int	is_quotes(char *s, int i, int j)
 {
 	if ((s[i + j] == '"' || s[i + j] == '\'') && parse_quotes(s + i + j))
 		return (1);
