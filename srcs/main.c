@@ -88,6 +88,7 @@ int	main(int argc, char **argv, char **env)
 	(void)argv;
 	d.l = NULL;
 	d.g = NULL;
+	d.main = 1;
 	if (argc != 1)
 		return (ft_puterr("minishell: too many arguments\n"), 1);
 	d.user = getenv("USER");

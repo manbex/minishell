@@ -85,6 +85,7 @@ typedef struct s_data
 	char			*prompt;
 	t_export		*x;
 	t_garbage		*g;
+	int				main;
 	int				pipefd[2];
 	int				pipe;
 	int				in;
@@ -132,7 +133,7 @@ void				exit_shell(t_data *d, int code);
 int					cmd_echo(t_data *d, t_lst *l);
 int					cmd_cd(t_data *d, t_lst *l);
 int					cmd_pwd(t_data *d);
-int					cmd_exit(t_data *d);
+int					cmd_exit(t_data *d, t_lst *l);
 int					var_cmd(t_data *d, t_lst *l);
 
 //					ENVIRONMENT

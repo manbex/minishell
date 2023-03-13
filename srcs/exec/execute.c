@@ -97,7 +97,9 @@ static void	call_childs(t_data *d, t_lst *tmp, int *pipe_err, int *error)
 		{
 			if (tmp->next)
 				close(d->pipe);
+			d->main = 0;
 			child(d, tmp);
+			d->main = 1;
 		}
 		if (tmp->pid == -1)
 			ft_fprintf(STDERR_FILENO, "minishell: %s\n", strerror(errno));
