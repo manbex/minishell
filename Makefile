@@ -6,7 +6,7 @@
 #    By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/27 17:17:08 by julmuntz          #+#    #+#              #
-#    Updated: 2023/03/12 18:57:31 by julmuntz         ###   ########.fr        #
+#    Updated: 2023/03/14 16:57:18 by julmuntz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,7 @@ NAME		=	minishell
 SRC_DIR		=	srcs/
 SRC 		=	main.c					\
 				main2.c					\
+				signals.c				\
 				$(addprefix parsing/,	\
 				env.c					\
 				tok_utils.c				\
@@ -42,10 +43,12 @@ SRC 		=	main.c					\
 				cmd_pwd.c				\
 				cmd_cd.c				\
 				cmd_exit.c				\
-				export_utils.c			\
-				var_utils.c				\
-				var_cmd.c				\
+				cmd_env.c				\
+				cmd_export.c			\
+				cmd_unset.c				\
 				env_utils.c				\
+				export_utils.c			\
+				export_utils2.c			\
 				)						\
 				$(addprefix libft/,		\
 				ft_strcmp.c				\

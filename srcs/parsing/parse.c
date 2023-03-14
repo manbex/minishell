@@ -37,7 +37,7 @@ static int	is_meta(char *str)
 	{
 		i = 1;
 		if ((*str == '>' && *(str + 1) == '>') \
-		|| (*str == '<' && *(str + 1) == '<'))
+		|| (*str == '<' && (*(str + 1) == '<' || *(str + 1) == '>')))
 			i = 2;
 	}
 	return (i);

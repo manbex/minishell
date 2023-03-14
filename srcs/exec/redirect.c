@@ -6,32 +6,25 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/19 13:34:24 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/02/20 17:17:39 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/03/14 18:15:21 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	heredoc2(t_data *d)
-{
-	d->in = open(".heredoc.tmp", O_RDONLY);
-	if (d->in == -1)
-		return (ft_puterr("minishell: heredoc: failed to open\n"), \
-		unlink(".heredoc.tmp"), 1);
-	d->heredoc = 1;
-	return (0);
-}
-
-static int	heredoc(t_data *d, char *limiter)
+static void	heredoc2(t_data *d, char *limiter, int fd)
 {
 	char	*str;
-	int		fd;
 
-	fd = open(".heredoc.tmp", O_WRONLY | O_CREAT | O_TRUNC | O_EXCL, 00777);
-	if (fd == -1)
-		return (ft_puterr("minishell: heredoc: failed to open\n"), 1);
 	while (1)
 	{
+		signal(SIGQUIT, SIG_IGN);
+		signal(SIGINT, &ctrl_c_heredoc);
+		if (g_exit_code == -3)
+		{
+			g_exit_code = 130;
+			break ;
+		}
 		str = readline("> ");
 		if (!str)
 		{
@@ -46,8 +39,23 @@ at line %d delimited by end-of-file (wanted '%s')\n", d->heredoc_line, limiter);
 		free(str);
 		d->heredoc_line++;
 	}
+}
+
+static int	heredoc(t_data *d, char *limiter)
+{
+	int		fd;
+
+	fd = open(".heredoc.tmp", O_WRONLY | O_CREAT | O_TRUNC | O_EXCL, 00777);
+	if (fd == -1)
+		return (ft_puterr("minishell: heredoc: failed to open\n"), 1);
+	heredoc2(d, limiter, fd);
 	close(fd);
-	return (heredoc2(d));
+	d->in = open(".heredoc.tmp", O_RDONLY);
+	if (d->in == -1)
+		return (ft_puterr("minishell: heredoc: failed to open\n"), \
+		unlink(".heredoc.tmp"), 1);
+	d->heredoc = 1;
+	return (0);
 }
 
 static int	open_infile(t_data *d, char *str, int type)
