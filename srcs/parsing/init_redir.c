@@ -12,6 +12,15 @@
 
 #include "minishell.h"
 
+static char	*dup_without_quotes(char *s)
+{
+	char	*str;
+
+	if (remove_quotes(s, &str))
+		return (NULL);
+	return (str);
+}
+
 static int	init_redir2(t_redir **tab, t_tok *t, int size)
 {
 	int		i;
@@ -29,7 +38,7 @@ static int	init_redir2(t_redir **tab, t_tok *t, int size)
 		if (!ft_strcmp(tmp->str, "<<"))
 			(*tab)[i].type = 3;
 		tmp = tmp->next;
-		(*tab)[i].str = ft_strdup(tmp->str);
+		(*tab)[i].str = dup_without_quotes(tmp->str);
 		if (!(*tab)->str)
 			return (1);
 		tmp = tmp->next;

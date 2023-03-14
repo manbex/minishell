@@ -107,6 +107,7 @@ t_lst				*ft_lst_free(t_lst *l);
 int					init_arg(t_lst *new, t_tok *t);
 int					init_redir(t_redir **tab, t_tok *t);
 int					redirect(t_data *d, t_lst *l);
+int					heredoc(t_data *d, char *limiter);
 void				ft_free_redir(t_redir *ptr);
 char				*expand_vars(t_data *d, char *str);
 int					separate_quotes(t_tok **t, char *s);

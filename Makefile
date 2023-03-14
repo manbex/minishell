@@ -35,6 +35,7 @@ SRC 		=	main.c					\
 				check_builtin.c			\
 				search_path.c			\
 				redirect.c				\
+				heredoc.c				\
 				child.c					\
 				handle_errors.c			\
 				)						\
