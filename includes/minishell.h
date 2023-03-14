@@ -6,18 +6,17 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 18:19:09 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/03/13 14:14:04 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/03/13 20:15:46 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# define COLOR_A "\1\033[38;5;220m\2"
-# define COLOR_B "\1\033[38;5;221m\2"
-# define COLOR_C "\1\033[38;5;222m\2"
-# define COLOR_D "\1\033[38;5;223m\2"
-# define COLOR_E "\1\033[0m\2"
-# define PROMPT "@minishell:"
+# define O "\1\033[38;5;208m\2"
+# define B "\1\033[38;5;195m\2"
+# define Y "\1\033[38;5;220m\2"
+# define D "\1\033[0m\2"
+# define HOST "@minishell:"
 # define _GNU_SOURCE
 
 # include <stdio.h>
@@ -55,8 +54,7 @@ typedef struct s_lst
 	int				called;
 	char			*cmd;
 	char			**arg;
-	t_redir			*infile;
-	t_redir			*outfile;
+	t_redir			*redir;
 	struct s_lst	*next;
 }					t_lst;
 
@@ -91,6 +89,7 @@ typedef struct s_data
 	int				in;
 	int				out;
 	int				heredoc;
+	int				heredoc_line;
 }					t_data;
 
 extern int	g_exit_code;
@@ -134,7 +133,9 @@ int					cmd_echo(t_data *d, t_lst *l);
 int					cmd_cd(t_data *d, t_lst *l);
 int					cmd_pwd(t_data *d);
 int					cmd_exit(t_data *d, t_lst *l);
-int					var_cmd(t_data *d, t_lst *l);
+int					cmd_env(t_data *d, t_lst *l);
+int					cmd_export(t_data *d, t_lst *l);
+int					cmd_unset(t_data *d, t_lst *l);
 
 //					ENVIRONMENT
 char				**init_env(char **env, t_data *d);

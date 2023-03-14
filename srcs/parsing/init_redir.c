@@ -22,8 +22,12 @@ static int	init_redir2(t_redir **tab, t_tok *t, int size)
 	while (i < size)
 	{
 		(*tab)[i].type = 0;
-		if (ft_strlen(tmp->str) == 2)
+		if (!ft_strcmp(tmp->str, ">>"))
 			(*tab)[i].type = 1;
+		if (!ft_strcmp(tmp->str, "<"))
+			(*tab)[i].type = 2;
+		if (!ft_strcmp(tmp->str, "<<"))
+			(*tab)[i].type = 3;
 		tmp = tmp->next;
 		(*tab)[i].str = ft_strdup(tmp->str);
 		if (!(*tab)->str)
