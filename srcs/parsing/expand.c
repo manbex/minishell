@@ -90,7 +90,11 @@ static int	init_tok_list(t_tok **t, char *str)
 	i = 0;
 	while (str[i])
 	{
-		j = isolate_var_name(str + i);
+		j = 0;
+		if (str[i] == '\'')
+			j = parse_quotes(str + i);
+		if (j == 0)
+			j = isolate_var_name(str + i);
 		if (j == 0)
 		{
 			while (str[i + j] && !(str[i + j] == '$' && str[i + j + 1] != '\t' \

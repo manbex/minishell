@@ -1,14 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/03/14 21:20:52 by mbenicho          #+#    #+#             */
+/*   Updated: 2023/03/15 01:13:32 by julmuntz         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int	event(void)
+static int	event(void)
 {
 	return (0);
+}
+
+static void	ctrl_c(int sig)
+{
+	if (sig == SIGINT)
+	{
+		g_exit_code = -3;
+		rl_replace_line("", 0);
+		rl_done = 1;
+	}
 }
 
 static int	heredoc_signal(void)
 {
 	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT, &ctrl_c_heredoc);
+	signal(SIGINT, &ctrl_c);
 	if (g_exit_code == -3)
 	{
 		g_exit_code = 130;

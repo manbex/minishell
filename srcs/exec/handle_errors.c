@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 18:43:54 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/03/12 21:57:32 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/03/15 00:14:08 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 void	free_stuff(t_data *d)
 {
 	rl_clear_history();
-	free(d->prompt);
 	ft_lst_free(d->l);
 	free(d->tmp);
 }
@@ -57,7 +56,7 @@ void	exec_error(char *str, char **arg, t_data *d)
 	if ((!ft_strchr(str, '/')) \
 	|| !ft_strcmp(str, ".") || !ft_strcmp(str, ".."))
 	{
-		ft_fprintf(STDERR_FILENO, "minishell: %s: command not found\n", str);
+		ft_fprintf(STDERR_FILENO, "%s: command not found\n", str);
 		if (!ft_strcmp(str, "."))
 			error = 2;
 		else
