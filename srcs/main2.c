@@ -63,6 +63,7 @@ static int	user_dir_name(char *cur_dir, char *user)
 	while (cur_dir[i])
 	{
 		if (cur_dir[i] == user[0]
+			&& ft_strlen(cur_dir) >= ft_strlen(user)
 			&& cur_dir[i + (ft_strlen(user) - 1)]
 			== user[(ft_strlen(user) - 1)]
 			&& cur_dir[ft_strlen(user)] == '/')
@@ -107,13 +108,7 @@ int	refresh_prompt(t_data *d)
 void	handle_ctrls(int sig)
 {
 	if (sig == SIGINT)
-	{
 		g_exit_code = -1;
-		ft_puterr("\n");
-	}
 	if (sig == SIGQUIT)
-	{
 		g_exit_code = -2;
-		ft_puterr("Quit (core dumped)\n");
-	}
 }

@@ -94,6 +94,8 @@ char	*expand_vars(t_data *d, char *str)
 	char	*line;
 	t_tok	*t;
 
+	if (*str == 0)
+		return (str);
 	t = expand_vars2(str);
 	if (!t)
 		return (NULL);
