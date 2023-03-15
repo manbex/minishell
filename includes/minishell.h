@@ -121,6 +121,7 @@ int					remove_quotes(char *s, char **str);
 
 //					EXECUTION
 int					exe_cmd(t_data *d);
+void				create_files(t_data *d);
 void				child(t_data *d, t_lst *l);
 void				exec_error(char *str, char **arg, t_data *d);
 int					find_cmd(char **str, char **env);

@@ -117,6 +117,7 @@ int	exe_cmd(t_data *d)
 
 	d->heredoc = 0;
 	pipe_err = 0;
+	create_files(d);
 	if (!d->l)
 		return (0);
 	if (handle_builtins(d))
