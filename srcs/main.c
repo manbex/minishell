@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:19:46 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/03/14 23:59:56 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/03/16 10:24:42 by mbenicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ int	g_exit_code = 0;
 int	main(int argc, char **argv, char **env)
 {
 	t_data	d;
+	char	buf[4096];
 
 	(void)argv;
 	d.l = NULL;
@@ -101,6 +102,7 @@ int	main(int argc, char **argv, char **env)
 	d.x = init_export(&d);
 	if (!d.x)
 		return (ft_puterr("minishell: malloc failed\n"), 1);
+	ft_setenv("PWD", getcwd(buf, sizeof(buf)), &d);
 	prompt(&d);
 	return (0);
 }

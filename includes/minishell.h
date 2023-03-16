@@ -6,7 +6,7 @@
 /*   By: julmuntz <julmuntz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 18:19:09 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/03/15 01:43:27 by julmuntz         ###   ########.fr       */
+/*   Updated: 2023/03/15 21:47:28 by julmuntz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,6 @@ int					remove_quotes(char *s, char **str);
 
 //					EXECUTION
 int					exe_cmd(t_data *d);
-void				create_files(t_data *d);
 void				child(t_data *d, t_lst *l);
 void				exec_error(char *str, char **arg, t_data *d);
 int					find_cmd(char **str, char **env);
